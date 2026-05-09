@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Finanza - App de Gestión de Finanzas</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f9f5ff;
+      color: #333;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #410C59 0%, #5c2e7f 100%);
+      color: #E3B3FF;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 3px solid #820021;
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    
+    .header p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    
+    .tabs {
+      display: flex;
+      background: white;
+      border-bottom: 2px solid #e8dff5;
+      overflow-x: auto;
+    }
+    
+    .tab-btn {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      background: transparent;
+      color: #DE2151;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 400;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+    
+    .tab-btn.active {
+      background: #410C5920;
+      color: #410C59;
+      font-weight: 600;
+      border-bottom: 3px solid #820021;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    h2 {
+      color: #410C59;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+    
+    h3 {
+      color: #410C59;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      color: white;
+      font-weight: 600;
+    }
+    
+    .stat-card.primary {
+      background: #410C59;
+      color: #E3B3FF;
+    }
+    
+    .stat-card.secondary {
+      background: #820021;
+      color: #DE2151;
+    }
+    
+    .stat-card.accent {
+      background: #91D6FF;
+      color: #410C59;
+    }
+    
+    .stat-card p {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+    
+    .stat-card h3 {
+      margin: 0;
+      font-size: 24px;
+      color: inherit;
+    }
+    
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #e8dff5;
+      margin-bottom: 20px;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    label {
+      margin-bottom: 6px;
+      color: #410C59;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    input, select, textarea {
+      padding: 8px;
+      border: 1px solid #e8dff5;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #410C59;
+      box-shadow: 0 0 0 3px rgba(65, 12, 89, 0.1);
+    }
+    
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+    }
+    
+    .btn.primary {
+      background: #410C59;
+      color: #E3B3FF;
+    }
+    
+    .btn.primary:hover {
+      opacity: 0.85;
+    }
+    
+    .btn.secondary {
+      background: #820021;
+      color: #DE2151;
+    }
+    
+    .btn.secondary:hover {
+      opacity: 0.85;
+    }
+    
+    .btn.accent {
+      background: #91D6FF;
+      color: #410C59;
+    }
+    
+    .btn.accent:hover {
+      opacity: 0.85;
+    }
+    
+    .tarjeta {
+      background: linear-gradient(135deg, #410C59 0%, #5c2e7f 100%);
+      color: #E3B3FF;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    
+    .tarjeta.credito {
+      background: linear-gradient(135deg, #820021 0%, #a80033 100%);
+      color: #DE2151;
+    }
+    
+    .tarjeta-header {
+      font-size: 12px;
+      opacity: 0.85;
+      margin-bottom: 15px;
+    }
+    
+    .tarjeta-nombre {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    
+    .tarjeta-info {
+      font-size: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .list-item {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #e8dff5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .list-item-left p {
+      margin: 4px 0 0 0;
+      font-size: 12px;
+      color: #DE2151;
+    }
+    
+    .list-item-left p:first-child {
+      margin: 0;
+      font-weight: 600;
+      color: #410C59;
+    }
+    
+    .list-item-right {
+      text-align: right;
+    }
+    
+    .list-item-right p {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .empty-state {
+      color: #DE2151;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f9f5ff;
+    }
+    
+    .login-box {
+      text-align: center;
+      max-width: 400px;
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(65, 12, 89, 0.1);
+    }
+    
+    .login-emoji {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    
+    .login-box h1 {
+      color: #410C59;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    
+    .login-box p {
+      color: #DE2151;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz84HxflRScTsIW8M2Z3XslowFqeNoUVlFRC70qh1o5kJCMf80yEu7J33Jjsoya_AYu/exec';
+
+class FinanzasApp {
+  constructor() {
+    this.currentUser = null;
+    this.activeTab = 'dashboard';
+    this.tarjetas = [];
+    this.gastos = [];
+    this.ingresos = [];
+    this.categorias = [
+      { id: 1, nombre: 'Comida', icono: '🍔', color: '#FF6B6B' },
+      { id: 2, nombre: 'Transporte', icono: '🚗', color: '#4ECDC4' },
+      { id: 3, nombre: 'Entretenimiento', icono: '🎬', color: '#FFE66D' },
+      { id: 4, nombre: 'Servicios', icono: '💳', color: '#95E1D3' },
+      { id: 5, nombre: 'Salud', icono: '🏥', color: '#F38181' },
+      { id: 6, nombre: 'Otros', icono: '📦', color: '#AA96DA' },
+    ];
+    this.init();
+  }
+
+  init() {
+    this.loadData();
+    this.render();
+  }
+
+  loadData() {
+    const saved = localStorage.getItem('finanzasData');
+    if (saved) {
+      const data = JSON.parse(saved);
+      this.tarjetas = data.tarjetas || [];
+      this.gastos = data.gastos || [];
+      this.ingresos = data.ingresos || [];
+    }
+  }
+
+  saveData() {
+    localStorage.setItem('finanzasData', JSON.stringify({
+      tarjetas: this.tarjetas,
+      gastos: this.gastos,
+      ingresos: this.ingresos
+    }));
+  }
+
+  login() {
+    this.currentUser = { name: 'Mi Finanza', email: 'usuario@gmail.com' };
+    this.render();
+  }
+
+  setTab(tab) {
+    this.activeTab = tab;
+    this.render();
+  }
+
+  async syncToGoogle(tipo, datos) {
+    try {
+      await fetch(GOOGLE_APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ tipo, ...datos })
+      });
+    } catch (err) {
+      console.error('Sync error:', err);
+    }
+  }
+
+  agregarTarjeta() {
+    const nombre = document.getElementById('tarjetaNombre')?.value || '';
+    const tipo = document.getElementById('tarjetaTipo')?.value || 'credito';
+    const limite = document.getElementById('tarjetaLimite')?.value || '';
+    const saldoInicial = document.getElementById('tarjetaSaldoInicial')?.value || '';
+
+    if (nombre && limite && saldoInicial) {
+      this.syncToGoogle('tarjeta', { nombre, tipo, limite, saldoInicial });
+      
+      this.tarjetas.push({
+        id: Date.now(),
+        nombre,
+        tipo,
+        limite,
+        saldoActual: parseFloat(saldoInicial)
+      });
+      
+      this.saveData();
+      document.getElementById('tarjetaNombre').value = '';
+      document.getElementById('tarjetaLimite').value = '';
+      document.getElementById('tarjetaSaldoInicial').value = '';
+      
+      this.render();
+    }
+  }
+
+  agregarGasto() {
+    const fecha = document.getElementById('gastoFecha')?.value || '';
+    const monto = document.getElementById('gastoMonto')?.value || '';
+    const categoria = document.getElementById('gastoCategoria')?.value || '';
+    const tarjeta = document.getElementById('gastoTarjeta')?.value || '';
+    const descripcion = document.getElementById('gastoDescripcion')?.value || '';
+
+    if (monto && categoria && tarjeta) {
+      this.syncToGoogle('gasto', { fecha, monto, categoria, tarjeta, descripcion });
+      
+      this.gastos.push({
+        id: Date.now(),
+        fecha,
+        monto: parseFloat(monto),
+        categoria,
+        tarjeta,
+        descripcion,
+        timestamp: new Date().toISOString()
+      });
+
+      const tarjetaIndex = this.tarjetas.findIndex(t => t.id === parseInt(tarjeta));
+      if (tarjetaIndex >= 0) {
+        this.tarjetas[tarjetaIndex].saldoActual -= parseFloat(monto);
+      }
+
+      this.saveData();
+      document.getElementById('gastoFecha').value = new Date().toISOString().split('T')[0];
+      document.getElementById('gastoMonto').value = '';
+      document.getElementById('gastoCategoria').value = '';
+      document.getElementById('gastoTarjeta').value = '';
+      document.getElementById('gastoDescripcion').value = '';
+      
+      this.render();
+    }
+  }
+
+  agregarIngreso() {
+    const fecha = document.getElementById('ingresoFecha')?.value || '';
+    const monto = document.getElementById('ingresoMonto')?.value || '';
+    const fuente = document.getElementById('ingresoFuente')?.value || '';
+    const tarjeta = document.getElementById('ingresoTarjeta')?.value || '';
+    const descripcion = document.getElementById('ingresoDescripcion')?.value || '';
+
+    if (monto && fuente && tarjeta) {
+      this.syncToGoogle('ingreso', { fecha, monto, fuente, tarjeta, descripcion });
+      
+      this.ingresos.push({
+        id: Date.now(),
+        fecha,
+        monto: parseFloat(monto),
+        fuente,
+        tarjeta,
+        descripcion,
+        timestamp: new Date().toISOString()
+      });
+
+      const tarjetaIndex = this.tarjetas.findIndex(t => t.id === parseInt(tarjeta));
+      if (tarjetaIndex >= 0) {
+        this.tarjetas[tarjetaIndex].saldoActual += parseFloat(monto);
+      }
+
+      this.saveData();
+      document.getElementById('ingresoFecha').value = new Date().toISOString().split('T')[0];
+      document.getElementById('ingresoMonto').value = '';
+      document.getElementById('ingresoFuente').value = '';
+      document.getElementById('ingresoTarjeta').value = '';
+      document.getElementById('ingresoDescripcion').value = '';
+      
+      this.render();
+    }
+  }
+
+  getTotalGastosMes() {
+    const mesActual = new Date().toISOString().slice(0, 7);
+    return this.gastos
+      .filter(g => g.fecha.slice(0, 7) === mesActual)
+      .reduce((sum, g) => sum + g.monto, 0);
+  }
+
+  getTotalIngresosMes() {
+    const mesActual = new Date().toISOString().slice(0, 7);
+    return this.ingresos
+      .filter(i => i.fecha.slice(0, 7) === mesActual)
+      .reduce((sum, i) => sum + i.monto, 0);
+  }
+
+  getSaldoTotal() {
+    return this.tarjetas.reduce((sum, t) => sum + t.saldoActual, 0);
+  }
+
+  render() {
+    const appDiv = document.getElementById('app');
+    
+    if (!this.currentUser) {
+      appDiv.innerHTML = `
+        <div class="login-container">
+          <div class="login-box">
+            <div class="login-emoji">💰</div>
+            <h1>Mi Finanza</h1>
+            <p>Controla tus gastos e ingresos con estilo</p>
+            <button class="btn primary" onclick="window.finanzasApp.login()">
+              🔐 Iniciar sesión
+            </button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    let html = `
+      <div class="header">
+        <h1>💎 Mi Finanza</h1>
+        <p>Bienvenida, ${this.currentUser.name}</p>
+        <p style="font-size: 11px; margin-top: 8px;">📊 Conectada a Google Sheets</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn ${this.activeTab === 'dashboard' ? 'active' : ''}" onclick="window.finanzasApp.setTab('dashboard')">📊 Dashboard</button>
+        <button class="tab-btn ${this.activeTab === 'gastos' ? 'active' : ''}" onclick="window.finanzasApp.setTab('gastos')">💸 Gastos</button>
+        <button class="tab-btn ${this.activeTab === 'ingresos' ? 'active' : ''}" onclick="window.finanzasApp.setTab('ingresos')">💵 Ingresos</button>
+        <button class="tab-btn ${this.activeTab === 'tarjetas' ? 'active' : ''}" onclick="window.finanzasApp.setTab('tarjetas')">💳 Tarjetas</button>
+        <button class="tab-btn ${this.activeTab === 'analisis' ? 'active' : ''}" onclick="window.finanzasApp.setTab('analisis')">📈 Análisis</button>
+      </div>
+
+      <div class="container">
+    `;
+
+    if (this.activeTab === 'dashboard') {
+      html += this.renderDashboard();
+    } else if (this.activeTab === 'gastos') {
+      html += this.renderGastos();
+    } else if (this.activeTab === 'ingresos') {
+      html += this.renderIngresos();
+    } else if (this.activeTab === 'tarjetas') {
+      html += this.renderTarjetas();
+    } else if (this.activeTab === 'analisis') {
+      html += this.renderAnalisis();
+    }
+
+    html += `</div>`;
+    appDiv.innerHTML = html;
+  }
+
+  renderDashboard() {
+    const totalGastos = this.getTotalGastosMes();
+    const totalIngresos = this.getTotalIngresosMes();
+    const saldoTotal = this.getSaldoTotal();
+
+    let html = `
+      <h2>Resumen General</h2>
+      <div class="stats-grid">
+        <div class="stat-card primary">
+          <p>Saldo Total</p>
+          <h3>$${saldoTotal.toFixed(2)}</h3>
+        </div>
+        <div class="stat-card secondary">
+          <p>Gastos este mes</p>
+          <h3>-$${totalGastos.toFixed(2)}</h3>
+        </div>
+        <div class="stat-card accent">
+          <p>Ingresos este mes</p>
+          <h3>+$${totalIngresos.toFixed(2)}</h3>
+        </div>
+      </div>
+
+      <h3>Tus Tarjetas</h3>
+    `;
+
+    if (this.tarjetas.length > 0) {
+      this.tarjetas.forEach(tarjeta => {
+        const porcentaje = (tarjeta.saldoActual / parseFloat(tarjeta.limite)) * 100;
+        html += `
+          <div class="tarjeta ${tarjeta.tipo === 'credito' ? 'credito' : ''}">
+            <div class="tarjeta-header">${tarjeta.tipo === 'credito' ? '💳 CRÉDITO' : '🏦 DÉBITO'}</div>
+            <div class="tarjeta-nombre">${tarjeta.nombre}</div>
+            <div class="tarjeta-info">
+              <span>Saldo disponible:</span>
+              <strong>$${tarjeta.saldoActual.toFixed(2)}</strong>
+            </div>
+            <div class="tarjeta-info">
+              <span>Límite:</span>
+              <strong>$${tarjeta.limite}</strong>
+            </div>
+            <div style="height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden; margin-top: 8px;">
+              <div style="height: 100%; background: rgba(255,255,255,0.6); width: ${porcentaje}%;"></div>
+            </div>
+          </div>
+        `;
+      });
+    } else {
+      html += `<div class="empty-state">📭 Aún no tienes tarjetas. ¡Agrega una en la sección de Tarjetas!</div>`;
+    }
+
+    return html;
+  }
+
+  renderGastos() {
+    let html = `<h2>Registrar Gasto</h2>`;
+
+    if (this.tarjetas.length > 0) {
+      html += `
+        <div class="card">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Fecha</label>
+              <input type="date" id="gastoFecha" value="${new Date().toISOString().split('T')[0]}" />
+            </div>
+            <div class="form-group">
+              <label>Monto</label>
+              <input type="number" id="gastoMonto" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="form-group">
+              <label>Categoría</label>
+              <select id="gastoCategoria">
+                <option value="">Selecciona...</option>
+                ${this.categorias.map(cat => `<option value="${cat.id}">${cat.icono} ${cat.nombre}</option>`).join('')}
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tarjeta</label>
+              <select id="gastoTarjeta">
+                <option value="">Selecciona...</option>
+                ${this.tarjetas.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 15px;">
+            <label>Descripción (opcional)</label>
+            <input type="text" id="gastoDescripcion" placeholder="Ej: Cena en restaurante" />
+          </div>
+          <button class="btn secondary" onclick="window.finanzasApp.agregarGasto()">💸 Registrar Gasto</button>
+        </div>
+      `;
+    } else {
+      html += `<div style="color: #DE2151; background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">⚠️ Debes agregar al menos una tarjeta primero</div>`;
+    }
+
+    html += `<h3>Últimos Gastos</h3>`;
+    if (this.gastos.length > 0) {
+      [...this.gastos].reverse().slice(0, 10).forEach(gasto => {
+        const categoria = this.categorias.find(c => c.id === parseInt(gasto.categoria));
+        const tarjeta = this.tarjetas.find(t => t.id === parseInt(gasto.tarjeta));
+        html += `
+          <div class="list-item">
+            <div class="list-item-left">
+              <p>${categoria?.nombre || 'Sin categoría'}</p>
+              <p>${tarjeta?.nombre || 'Sin tarjeta'} • ${gasto.fecha}</p>
+              ${gasto.descripcion ? `<p>${gasto.descripcion}</p>` : ''}
+            </div>
+            <div class="list-item-right">
+              <p style="color: #820021;">-$${gasto.monto.toFixed(2)}</p>
+            </div>
+          </div>
+        `;
+      });
+    } else {
+      html += `<div class="empty-state">📭 Aún no tienes gastos registrados</div>`;
+    }
+
+    return html;
+  }
+
+  renderIngresos() {
+    let html = `<h2>Registrar Ingreso</h2>`;
+
+    if (this.tarjetas.length > 0) {
+      html += `
+        <div class="card">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Fecha</label>
+              <input type="date" id="ingresoFecha" value="${new Date().toISOString().split('T')[0]}" />
+            </div>
+            <div class="form-group">
+              <label>Monto</label>
+              <input type="number" id="ingresoMonto" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="form-group">
+              <label>Fuente</label>
+              <select id="ingresoFuente">
+                <option value="">Selecciona...</option>
+                <option value="salario">💼 Salario</option>
+                <option value="freelance">💻 Freelance</option>
+                <option value="inversiones">📈 Inversiones</option>
+                <option value="otro">🎁 Otro</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tarjeta</label>
+              <select id="ingresoTarjeta">
+                <option value="">Selecciona...</option>
+                ${this.tarjetas.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 15px;">
+            <label>Descripción (opcional)</label>
+            <input type="text" id="ingresoDescripcion" placeholder="Ej: Pago de cliente X" />
+          </div>
+          <button class="btn accent" onclick="window.finanzasApp.agregarIngreso()">💵 Registrar Ingreso</button>
+        </div>
+      `;
+    } else {
+      html += `<div style="color: #DE2151; background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">⚠️ Debes agregar al menos una tarjeta primero</div>`;
+    }
+
+    html += `<h3>Últimos Ingresos</h3>`;
+    if (this.ingresos.length > 0) {
+      [...this.ingresos].reverse().slice(0, 10).forEach(ingreso => {
+        const tarjeta = this.tarjetas.find(t => t.id === parseInt(ingreso.tarjeta));
+        html += `
+          <div class="list-item">
+            <div class="list-item-left">
+              <p>${ingreso.fuente}</p>
+              <p>${tarjeta?.nombre || 'Sin tarjeta'} • ${ingreso.fecha}</p>
+              ${ingreso.descripcion ? `<p>${ingreso.descripcion}</p>` : ''}
+            </div>
+            <div class="list-item-right">
+              <p style="color: #91D6FF;">+$${ingreso.monto.toFixed(2)}</p>
+            </div>
+          </div>
+        `;
+      });
+    } else {
+      html += `<div class="empty-state">📭 Aún no tienes ingresos registrados</div>`;
+    }
+
+    return html;
+  }
+
+  renderTarjetas() {
+    let html = `
+      <h2>Mis Tarjetas</h2>
+      <div class="card">
+        <h3>Agregar Nueva Tarjeta</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" id="tarjetaNombre" placeholder="Ej: Visa Banco X" />
+          </div>
+          <div class="form-group">
+            <label>Tipo</label>
+            <select id="tarjetaTipo">
+              <option value="credito">💳 Crédito</option>
+              <option value="debito">🏦 Débito</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Límite/Saldo</label>
+            <input type="number" id="tarjetaLimite" step="0.01" placeholder="0.00" />
+          </div>
+          <div class="form-group">
+            <label>Saldo Inicial</label>
+            <input type="number" id="tarjetaSaldoInicial" step="0.01" placeholder="0.00" />
+          </div>
+        </div>
+        <button class="btn primary" onclick="window.finanzasApp.agregarTarjeta()">➕ Agregar Tarjeta</button>
+      </div>
+    `;
+
+    if (this.tarjetas.length > 0) {
+      html += `<h3>Tarjetas Registradas</h3>`;
+      this.tarjetas.forEach(tarjeta => {
+        const gastado = parseFloat(tarjeta.limite) - tarjeta.saldoActual;
+        html += `
+          <div class="tarjeta ${tarjeta.tipo === 'credito' ? 'credito' : ''}">
+            <div class="tarjeta-header">${tarjeta.tipo === 'credito' ? '💳 CRÉDITO' : '🏦 DÉBITO'}</div>
+            <div class="tarjeta-nombre">${tarjeta.nombre}</div>
+            <div class="tarjeta-info">
+              <span>Saldo actual:</span>
+              <strong>$${tarjeta.saldoActual.toFixed(2)}</strong>
+            </div>
+            <div class="tarjeta-info">
+              <span>Límite:</span>
+              <strong>$${tarjeta.limite}</strong>
+            </div>
+            <div class="tarjeta-info">
+              <span>Gastado:</span>
+              <strong>$${gastado.toFixed(2)}</strong>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    return html;
+  }
+
+  renderAnalisis() {
+    let html = `<h2>Análisis de Gastos</h2>`;
+
+    if (this.gastos.length > 0) {
+      html += `<div class="card"><h3>Resumen por Categoría</h3>`;
+      this.categorias.forEach(cat => {
+        const total = this.gastos.filter(g => g.categoria === cat.id).reduce((sum, g) => sum + g.monto, 0);
+        if (total === 0) return;
+        const totalGastos = this.gastos.reduce((sum, g) => sum + g.monto, 0);
+        const porcentaje = (total / totalGastos) * 100;
+        html += `
+          <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="color: #410C59; font-weight: 500;">${cat.nombre}</span>
+              <span style="color: #820021; font-weight: 600;">$${total.toFixed(2)}</span>
+            </div>
+            <div style="height: 8px; background: #e8dff5; border-radius: 4px; overflow: hidden;">
+              <div style="height: 100%; background: ${cat.color}; width: ${porcentaje}%;"></div>
+            </div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    } else {
+      html += `<div class="empty-state">📭 Aún no tienes gastos para analizar</div>`;
+    }
+
+    return html;
+  }
+}
+
+window.finanzasApp = new FinanzasApp();
+</script>
+
+</body>
+</html>
